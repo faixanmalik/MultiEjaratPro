@@ -99,7 +99,6 @@ return (
                   <FaFacebookF className='text-5xl cursor-pointer p-[7px] border border-gray-600 rounded-full transition duration-200 shadow-sm hover:shadow-md '/>
                 </button>
               </div>
-
               <CardBody className="flex flex-col gap-3 pt-7">
 
                 <input onChange={handleChange} value={email} name="email" id='email' type="email" placeholder='abc@example.com' className="bg-gray-100 bg-opacity-50 resize-none text-gray-700 outline-none border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 rounded-lg px-3 py-2 text-sm w-full transition-colors duration-200 ease-in-out" />
