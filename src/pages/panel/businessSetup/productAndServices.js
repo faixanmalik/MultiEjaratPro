@@ -15,6 +15,7 @@ import { BiExport, BiImport } from 'react-icons/bi';
 import { DownloadTableExcel } from 'react-export-table-to-excel';
 import {XLSX, read, utils} from 'xlsx';
 import TaxRate from 'models/TaxRate';
+import { Switch } from "@material-tailwind/react";
 
 
 
@@ -102,6 +103,14 @@ const ProductAndServices = ({product, charts, dbTaxRate}) => {
       }
   }
 
+  function handleLinkedCheque(e) {
+    if (e.target.checked) {
+      setLinkedCheque(true);
+    } else {
+      setLinkedCheque(false);
+    }
+  }
+
 
 
 
@@ -115,6 +124,7 @@ const ProductAndServices = ({product, charts, dbTaxRate}) => {
   const [linkContract, setLinkContract] = useState('')
   const [purchaseTaxRate, setPurchaseTaxRate] = useState('')
   const [desc, setdesc] = useState('')
+  const [linkedCheque, setLinkedCheque] = useState('')
   
   
   const [salesStatus, setSalesStatus] = useState('')
@@ -414,7 +424,7 @@ const ProductAndServices = ({product, charts, dbTaxRate}) => {
         <div className="fixed inset-0 z-10 overflow-y-auto">
           <div className="flex min-h-full items-stretch justify-center text-center md:items-center md:px-2 lg:px-4">
             <Transition.Child as={Fragment} enter="ease-out duration-300" enterFrom="opacity-0 translate-y-4 md:translate-y-0 md:scale-95" enterTo="opacity-100 translate-y-0 md:scale-100" leave="ease-in duration-200" leaveFrom="opacity-100 translate-y-0 md:scale-100" leaveTo="opacity-0 translate-y-4 md:translate-y-0 md:scale-95">
-              <Dialog.Panel className="flex w-full transform text-left text-base transition md:my-8 md:max-w-2xl md:px-4 lg:max-w-6xl">
+              <Dialog.Panel className="flex w-full transform text-left text-base transition md:my-8 md:max-w-2xl md:px-4 lg:max-w-5xl">
                 <div className="relative flex w-full items-center overflow-hidden bg-white px-4 pt-14 pb-8 shadow-2xl sm:px-6 sm:pt-8 md:p-6 lg:p-8">
                   <button type="button" className="absolute top-4 right-4 text-gray-400 hover:text-gray-500 sm:top-8 sm:right-6 md:top-6 md:right-6 lg:top-6 lg:right-8" onClick={() => setOpen(false)}>
                     <span className="sr-only">Close</span>
@@ -426,7 +436,7 @@ const ProductAndServices = ({product, charts, dbTaxRate}) => {
                     <div className="overflow-hidden shadow sm:rounded-md">
                       <div className="bg-white px-4 py-5 sm:p-6">
                         <div className="grid grid-cols-6 gap-6">
-                          <div className="col-span-1">
+                          <div className="col-span-2">
                             <label htmlFor="code" className="block text-sm font-medium text-gray-700">
                               Code (required)
                             </label>
@@ -477,23 +487,38 @@ const ProductAndServices = ({product, charts, dbTaxRate}) => {
                           </div>
 
 
-                          <div className="col-span-1">
+                          <div className="col-span-2">
+                            {linkedCheque ? <div>
+                              <label htmlFor="linkContract" className="block text-sm font-medium text-gray-700">
+                                Link Contract
+                              </label>
+                              <select
+                                onChange={handleChange}
+                                value={linkContract}
+                                id="linkContract"
+                                name="linkContract"
+                                className="mt-1 p-2 block w-full rounded-md border border-gray-300 bg-white px-1 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
+                              >
+                                <option>Select account</option>
+                                <option value='unitRent'>Unit Rent</option>
+                                <option value='commission'>Commission</option>
+                                <option value='parkingRent'>Parking Rent</option>
+                                <option value='securityDeposit'>Security Deposit</option>
+                              </select>
+                            </div>: <div className='h-[61px]'>
+
+                              </div>}
+                          </div>
+
+                          <div className="col-span-3 flex space-x-5 my-auto"></div>
+                          
+                          <div className="col-span-1 w-64 flex space-x-5 my-auto">
                             <label htmlFor="linkContract" className="block text-sm font-medium text-gray-700">
                               Link Contract
                             </label>
-                            <select
-                              onChange={handleChange}
-                              value={linkContract}
-                              id="linkContract"
-                              name="linkContract"
-                              className="mt-1 p-2 block w-full rounded-md border border-gray-300 bg-white px-1 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
-                            >
-                              <option>Select account</option>
-                              <option value='unitRent'>Unit Rent</option>
-                              <option value='commission'>Commission</option>
-                              <option value='parkingRent'>Parking Rent</option>
-                              <option value='securityDeposit'>Security Deposit</option>
-                            </select>
+                            <div>
+                              <Switch color="blue" value={linkedCheque} onChange={handleLinkedCheque} />
+                            </div>
                           </div>
                           
                           <div className="col-span-6">
