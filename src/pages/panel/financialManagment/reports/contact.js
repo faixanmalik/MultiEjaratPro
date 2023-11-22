@@ -18,85 +18,82 @@ import ReceiptVoucher from 'models/ReceiptVoucher';
 import PaymentVoucher from 'models/PaymentVoucher';
 import Expenses from 'models/Expenses';
 
-const ContactTransactionSummary = (
-  { dbExpensesVoucher, dbPaymentVoucher, dbReceipts, 
-    dbCreditNotes, dbCreditNote, dbPurchaseInvoice, 
-    dbSalesInvoice, dbCreditSalesInvoices, dbJournalVoucher, 
-    dbCharts,  dbContacts }) => {
+const ContactTransactionSummary = ({ dbExpensesVoucher, dbPaymentVoucher, dbReceiptVoucher, dbDebitNote, dbCreditNote, dbPurchaseInvoice, dbSalesInvoice, dbCreditSalesInvoice, dbJournalVoucher, dbCharts,  dbContacts }) => {
 
   // Cash Receipt
   const [fromDate, setFromDate] = useState('')
   const [toDate, setToDate] = useState('') 
   const [sortBy, setsortBy] = useState('')
   const [contact, setContact] = useState('')
-  const [filteredTrx, setFilteredTrx] = useState([])
+  const [newEntry, setNewEntry] = useState([])
 
 
+
+  let dbAllEntries = [];
   const submit = ()=>{
+
+    let allVouchers = [];
 
     if(contact){
 
 
-      let filteredTrx = []
-      // Credit Sales Invoice
-      dbCreditSalesInvoices = dbCreditSalesInvoices
-        .filter((item) => item.name === `${contact}`)
-        .map((item) => ({
-          ...item,
-          journalNo: item.billNo,
-          chequeStatus: 'Received',
-          trxTotalDebit: parseInt(item.totalAmount, 10),
-          trxTotalCredit: 0,
-          balance: 0,
-        }));
+      
+      allVouchers = allVouchers.concat(dbExpensesVoucher, dbPaymentVoucher, dbReceiptVoucher, dbDebitNote, dbCreditNote, dbPurchaseInvoice, dbSalesInvoice, dbCreditSalesInvoice, dbJournalVoucher);
 
+      // Data filter
+      const dbAll = allVouchers.filter((data) => {
+        if (data.name === `${contact}`) {
 
-      // Credit Note Invoice
-      dbCreditNotes = dbCreditNotes
-        .filter((item) => item.name === `${contact}`)
-        .map((item) => ({
-          ...item,
-          chequeStatus: 'Received',
-          trxTotalDebit: 0,
-          trxTotalCredit: parseInt(item.totalAmount, 10),
-          balance: 0,
-        }));
+          if(data.type == 'PaymentVoucher' || data.type == 'ReceiptVoucher'){
 
+            Object.assign(data, {
+              transactionAmount: data.totalPaid,
+            });
 
-      // Payment Voucher
-      dbPaymentVoucher = dbPaymentVoucher
-        .filter((item) => item.name === `${contact}`)
-        .map((item) => ({
-          ...item,
-          chequeStatus: 'Received',
-          trxTotalDebit: parseInt(item.totalPaid, 10),
-          trxTotalCredit: 0,
-          balance: 0,
-        }));
-
-      // Receipts Voucher
-      dbReceipts = dbReceipts
-        .filter((receipt) => receipt.name === `${contact}`)
-        .map((receipt) => {
-          const filteredInputList = receipt.inputList;
-          const totalAmount = filteredInputList.reduce((total, item) => total + item.paid, 0);
-
-          if (filteredInputList.length > 0) {
-            return {
-              ...receipt,
-              chequeStatus: 'Deposited',
-              trxTotalDebit: 0,
-              trxTotalCredit: parseInt(totalAmount, 10),
-              balance: 0,
-            };
+            if(fromDate && toDate){
+              const dbDate = moment(data.journalDate).format('YYYY-MM-DD')
+              return dbDate >= fromDate && dbDate <= toDate;
+            }
+            else{
+              return data.name;
+            }
           }
-        });
+          else if( data.type == 'PurchaseInvoice' || data.type == 'CreditSalesInvoice' || data.type == 'SalesInvoice' || data.type == 'Expenses' || data.type === 'DebitNote' || data.type === 'CreditNote'){
+            Object.assign(data, {
+              transactionAmount: data.fullAmount,
+            });
 
-      filteredTrx = filteredTrx.concat( dbCreditSalesInvoices, dbReceipts, dbCreditNotes, dbPaymentVoucher);
-      console.log(filteredTrx)
-      setFilteredTrx(filteredTrx);
+            if(fromDate && toDate){
+              const dbDate = moment(data.journalDate).format('YYYY-MM-DD')
+              return dbDate >= fromDate && dbDate <= toDate;
+            }
+            else{
+              return data.name;
+            }
+          }
+          else{
+            Object.assign(data, {
+              transactionAmount: data.totalDebit,
+            });
 
+            if(fromDate && toDate){
+              const dbDate = moment(data.journalDate).format('YYYY-MM-DD')
+              return dbDate >= fromDate && dbDate <= toDate;
+            }
+            else{
+              return data.name;
+            }
+          }
+        }
+      })
+      dbAllEntries = dbAllEntries.concat(dbAll);
     }
+
+    console.log(dbAllEntries)
+    
+    // Date filter
+    dbAllEntries.sort((a, b) => new Date(a.date) - new Date(b.date));
+    setNewEntry(dbAllEntries)
   }
 
 
@@ -222,13 +219,7 @@ const ContactTransactionSummary = (
               <tbody>
 
                 {/* All Vouchers */}
-                {filteredTrx.map((item, index) => {
-
-                  let previousBalance = 0;
-                  filteredTrx.forEach((item) => {
-                    item.balance = previousBalance + item.trxTotalDebit - item.trxTotalCredit;
-                    previousBalance = item.balance;
-                  });
+                {newEntry.map((item, index) => {
 
                   return <tr key={index} className="bg-white border-b hover:bg-gray-50">
                     <td className="px-6 py-3">
@@ -245,19 +236,20 @@ const ContactTransactionSummary = (
                       }
                     </td>
                     <td className="px-6 py-3">
-                      {parseInt(item.trxTotalDebit).toLocaleString()}
+                      {parseInt(item.transactionAmount).toLocaleString()}
                     </td>
                     <td className="px-6 py-3">
-                      {parseInt(item.trxTotalCredit).toLocaleString()}
+                      {parseInt(item.transactionAmount).toLocaleString()}
                     </td>
                     <td className="px-6 py-3">
-                      {parseInt(item.balance).toLocaleString()}
+                      {parseInt(item.transactionAmount).toLocaleString()}
                     </td>
+                      
                   </tr>
                 })}
               </tbody>
             </table>
-            { filteredTrx.length === 0  ? <h1 className='text-red-600 text-center text-base my-3'>No data found!</h1> : ''}
+            { newEntry.length === 0  ? <h1 className='text-red-600 text-center text-base my-3'>No data found!</h1> : ''}
           </div>
         </div>
       </form>
@@ -295,12 +287,12 @@ export async function getServerSideProps() {
       dbJournalVoucher: JSON.parse(JSON.stringify(dbJournalVoucher)),
       dbContacts: JSON.parse(JSON.stringify(dbContacts)),
 
-      dbCreditSalesInvoices: JSON.parse(JSON.stringify(dbCreditSalesInvoice)),
+      dbCreditSalesInvoice: JSON.parse(JSON.stringify(dbCreditSalesInvoice)),
       dbSalesInvoice: JSON.parse(JSON.stringify(dbSalesInvoice)),
       dbPurchaseInvoice: JSON.parse(JSON.stringify(dbPurchaseInvoice)),
       dbDebitNote: JSON.parse(JSON.stringify(dbDebitNote)),
-      dbCreditNotes: JSON.parse(JSON.stringify(dbCreditNote)),
-      dbReceipts: JSON.parse(JSON.stringify(dbReceiptVoucher)),
+      dbCreditNote: JSON.parse(JSON.stringify(dbCreditNote)),
+      dbReceiptVoucher: JSON.parse(JSON.stringify(dbReceiptVoucher)),
       dbPaymentVoucher: JSON.parse(JSON.stringify(dbPaymentVoucher)),
       dbExpensesVoucher: JSON.parse(JSON.stringify(dbExpensesVoucher)),
     }
