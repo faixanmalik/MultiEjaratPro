@@ -93,17 +93,9 @@ const ContactTransactionSummary = (
         });
 
       filteredTrx = filteredTrx.concat( dbCreditSalesInvoices, dbReceipts, dbCreditNotes, dbPaymentVoucher);
-      console.log(filteredTrx)
       setFilteredTrx(filteredTrx);
-
     }
   }
-
-
-
-
-
-
 
   const handleChange = (e) => {
     if (e.target.name === 'contact') {
@@ -117,20 +109,17 @@ const ContactTransactionSummary = (
     }
   }
     
-
-
-
   return (
   <>
   <ProSidebarProvider>
   <style jsx global>{`
-      footer {
-        display: none;
-      }
-      header {
-        display: none;
-      }
-    `}</style>
+    footer {
+      display: none;
+    }
+    header {
+      display: none;
+    }
+  `}</style>
   <FullLayout>
 
   
