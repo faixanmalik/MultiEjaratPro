@@ -79,7 +79,7 @@ const ContactTransactionSummary = (
         .filter((receipt) => receipt.name === `${contact}`)
         .map((receipt) => {
           const filteredInputList = receipt.inputList;
-          const totalAmount = filteredInputList.reduce((total, item) => total + item.paid, 0);
+          const totalAmount = filteredInputList.reduce((total, item) => total + parseInt(item.paid), 0);
 
           if (filteredInputList.length > 0) {
             return {
