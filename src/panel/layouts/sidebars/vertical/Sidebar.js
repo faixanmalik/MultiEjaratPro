@@ -208,7 +208,7 @@ const Sidebar2 = ({ showMobilemenu }) => {
                 {t('chartsOfAccount')}
               </MenuItem>
               <MenuItem href="/panel/businessSetup/taxRate" icon={<HiOutlineReceiptTax className='text-lg'/>} className={ location === '/panel/businessSetup/taxRate' ?  'text-indigo-700 bg-zinc-50 font-medium' : 'text-gray-600 font-medium'}>
-                {t('taxRate')}Tax Rate
+                {t('taxRate')}
               </MenuItem>
               <MenuItem href="/panel/businessSetup/contactList" icon={<AiOutlineContacts className='text-lg'/>} className={ location === '/panel/businessSetup/contactList' ?  'text-indigo-700 bg-zinc-50 font-medium' : 'text-gray-600 font-medium'}>
                 {t('contactList')}

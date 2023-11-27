@@ -10,5 +10,9 @@
   "sales":"مبيعات",
   "grossProfit": "اجمالي الربح",
   "currentAssets":"الاصول المتداولة",
-  "currentLiabilities":"المطلوبات المتداولة"
+  "currentLiabilities":"المطلوبات المتداولة",
+  "hey":"يا!",
+  "info": "معلومات",
+  "editProfile": "تعديل الملف الشخصي",
+  "logout": "تسجيل خروج"
 }

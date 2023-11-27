@@ -10,5 +10,9 @@
   "sales":"Sales",
   "grossProfit": "Gross Profit",
   "currentAssets":"Current-Assets",
-  "currentLiabilities":"Current-Liabilities"
+  "currentLiabilities":"Current-Liabilities",
+  "hey":"Hey!",
+  "info": "Info",
+  "editProfile": "Edit Profile",
+  "logout": "Logout"
 }
