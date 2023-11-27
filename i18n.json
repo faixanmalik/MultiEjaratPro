@@ -3,7 +3,10 @@
   "defaultLocale": "en",
   "pages": {
     "*": ["common"],
-    "/": ["home", "login"],
-    "/login": ["login"]
+    "/": ["login"],
+    "/login": ["login"],
+    "/signup": ["signup"],
+    "/panel": ["panel","sidebar"]
+
   }
 }
